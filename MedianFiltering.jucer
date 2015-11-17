@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="hvV9C3" name="MedianFiltering" projectType="consoleapp" version="1.0.0"
+              bundleIdentifier="com.yourcompany.MedianFiltering" includeBinaryInAppConfig="1"
+              jucerVersion="4.0.1">
+  <MAINGROUP id="f5L79j" name="MedianFiltering">
+    <GROUP id="{55463C89-E759-0D71-93E7-E9509D8E2B85}" name="Source">
+      <GROUP id="{DD300F7D-70EC-4813-9F95-60FFD6F3D0FA}" name="Transforms">
+        <FILE id="QKIyTq" name="ISTFT.cpp" compile="1" resource="0" file="Source/Transforms/ISTFT.cpp"/>
+        <FILE id="ShHWTN" name="ISTFT.h" compile="0" resource="0" file="Source/Transforms/ISTFT.h"/>
+        <FILE id="oYupDy" name="STFT.cpp" compile="1" resource="0" file="Source/Transforms/STFT.cpp"/>
+        <FILE id="a3rrOt" name="STFT.h" compile="0" resource="0" file="Source/Transforms/STFT.h"/>
+      </GROUP>
+      <FILE id="SFHkIT" name="HarmonicPercussiveSeparator.cpp" compile="1"
+            resource="0" file="Source/HarmonicPercussiveSeparator.cpp"/>
+      <FILE id="K7KSex" name="HarmonicPercussiveSeparator.h" compile="0"
+            resource="0" file="Source/HarmonicPercussiveSeparator.h"/>
+      <FILE id="Yku5Wv" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <VS2015 targetFolder="Builds/VisualStudio2015">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="1" optimisation="1" targetName="MedianFiltering"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="0" optimisation="3" targetName="MedianFiltering"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../Cpp/JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2015>
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" libraryPath="/usr/X11R6/lib/" isDebug="1" optimisation="1"
+                       targetName="MedianFiltering"/>
+        <CONFIGURATION name="Release" libraryPath="/usr/X11R6/lib/" isDebug="0" optimisation="3"
+                       targetName="MedianFiltering"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../Cpp/JUCE/modules"/>
+      </MODULEPATHS>
+    </LINUX_MAKE>
+    <ANDROID targetFolder="Builds/Android" androidVersionCode="1" androidActivityClass="com.yourcompany.medianfiltering.MedianFiltering"
+             androidMinimumSDK="10" androidInternetNeeded="1" androidKeyStore="${user.home}/.android/debug.keystore"
+             androidKeyStorePass="android" androidKeyAlias="androiddebugkey"
+             androidKeyAliasPass="android" androidCpp11="1" androidSDKPath=""
+             androidNDKPath="">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" androidArchitectures="armeabi armeabi-v7a" isDebug="1"
+                       optimisation="1" targetName="MedianFiltering"/>
+        <CONFIGURATION name="Release" androidArchitectures="armeabi armeabi-v7a" isDebug="0"
+                       optimisation="3" targetName="MedianFiltering"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../Cpp/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../Cpp/JUCE/modules"/>
+      </MODULEPATHS>
+    </ANDROID>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0"/>
+  </MODULES>
+  <JUCEOPTIONS JUCE_USE_FLAC="enabled" JUCE_USE_MP3AUDIOFORMAT="enabled"/>
+</JUCERPROJECT>

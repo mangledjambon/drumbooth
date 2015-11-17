@@ -1,0 +1,19 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2015
+Project("{65FB914A-8431-3F56-5BDB-3BDC57062018}") = "MedianFiltering", "MedianFiltering.vcxproj", "{46AC1C09-0685-D2C4-54A6-86A3775072EB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{46AC1C09-0685-D2C4-54A6-86A3775072EB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{46AC1C09-0685-D2C4-54A6-86A3775072EB}.Debug|Win32.Build.0 = Debug|Win32
+		{46AC1C09-0685-D2C4-54A6-86A3775072EB}.Release|Win32.ActiveCfg = Release|Win32
+		{46AC1C09-0685-D2C4-54A6-86A3775072EB}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

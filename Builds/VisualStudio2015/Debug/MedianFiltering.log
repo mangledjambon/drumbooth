@@ -1,0 +1,37 @@
+﻿Build started 17/11/2015 12:42:03.
+     1>Project "D:\Sean\Documents\MedianFiltering\Builds\VisualStudio2015\MedianFiltering.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I..\..\JuceLibraryCode /I..\..\..\..\Cpp\JUCE\modules /ZI /nologo /W4 /WX- /MP /Od /Oy- /D _CONSOLE /D _CRT_SECURE_NO_WARNINGS /D WIN32 /D _WINDOWS /D DEBUG /D _DEBUG /D JUCER_VS2015_78A5022=1 /D JUCE_APP_VERSION=1.0.0 /D JUCE_APP_VERSION_HEX=0x10000 /Gm- /EHsc /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"Debug\\" /Fd"Debug\\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt ..\..\Source\Main.cpp
+         Main.cpp
+     1>d:\sean\documents\medianfiltering\source\main.cpp(71): warning C4244: 'argument': conversion from 'juce::int64' to 'int', possible loss of data
+     1>d:\sean\documents\medianfiltering\source\main.cpp(74): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+     1>d:\sean\documents\medianfiltering\source\main.cpp(79): warning C4244: 'argument': conversion from 'juce::int64' to 'int', possible loss of data
+     1>d:\sean\documents\medianfiltering\source\main.cpp(159): warning C4456: declaration of 'i' hides previous local declaration
+         d:\sean\documents\medianfiltering\source\main.cpp(48): note: see declaration of 'i'
+     1>d:\sean\documents\medianfiltering\source\main.cpp(181): warning C4244: 'argument': conversion from 'juce::int64' to 'int', possible loss of data
+     1>d:\sean\documents\medianfiltering\source\main.cpp(129): warning C4189: 'finished': local variable is initialized but not referenced
+     1>d:\sean\documents\medianfiltering\source\main.cpp(141): warning C4700: uninitialized local variable 'ifftResults_Left' used
+     1>d:\sean\documents\medianfiltering\source\main.cpp(142): warning C4700: uninitialized local variable 'ifftResults_Right' used
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\Sean\Documents\MedianFiltering\Builds\VisualStudio2015\Debug\\MedianFiltering.exe" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /NODEFAULTLIB:libcmt.lib /NODEFAULTLIB:msvcrt.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"Debug\\MedianFiltering.pdb" /SUBSYSTEM:CONSOLE /LARGEADDRESSAWARE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\Sean\Documents\MedianFiltering\Builds\VisualStudio2015\Debug\MedianFiltering.lib" /MACHINE:X86 /SAFESEH:NO Debug\resources.res
+         Debug\\ISTFT.obj
+         Debug\\STFT.obj
+         Debug\\HarmonicPercussiveSeparator.obj
+         Debug\\Main.obj
+         Debug\\juce_audio_basics.obj
+         Debug\\juce_audio_devices.obj
+         Debug\\juce_audio_formats.obj
+         Debug\\juce_audio_processors.obj
+         Debug\\juce_core.obj
+         Debug\\juce_cryptography.obj
+         Debug\\juce_data_structures.obj
+         Debug\\juce_events.obj
+         Debug\\juce_graphics.obj
+         Debug\\juce_gui_basics.obj
+         Debug\\juce_gui_extra.obj
+         MedianFiltering.vcxproj -> D:\Sean\Documents\MedianFiltering\Builds\VisualStudio2015\Debug\MedianFiltering.exe
+     1>Done Building Project "D:\Sean\Documents\MedianFiltering\Builds\VisualStudio2015\MedianFiltering.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.27
