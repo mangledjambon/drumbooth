@@ -5,9 +5,8 @@
 	median filtering on the audio data.
 
 	TODO: 
-			fix mp3 support (currently just reads 0s)
-			median filter implementation
-			write file to disk
+			fix mp3 support (currently just reads 0s)	
+			Filter spectrogram data.
 
   ==============================================================================
 */
@@ -80,6 +79,9 @@ int main (int argc, char* argv[])
 		cout << "\nBuffer filled.";
 		// ================================
 
+
+		/* Convert to spectrogram (frequency domain) data using FFT. */
+
 		// print length of buffer
 		cout << "\nBuffer length is " << samples.getNumSamples();
 		cout << "\nInitialising FFT with window size " << WINDOW_SIZE;
@@ -87,82 +89,101 @@ int main (int argc, char* argv[])
 		stft->initWindow(1);
 
 		float* bufferData[2];
-		bufferData[0] = (float*)samples.getReadPointer(0, 0);
-		bufferData[1] = (float*)samples.getReadPointer(1, 0);
+		bufferData[0] = new float[4096];
+		bufferData[1] = new float[4096];
 
-		std::complex<float>* spectrogramData_L, * spectrogramData_R;
-		spectrogramData_L = new std::complex<float>[numSamples];
-		spectrogramData_R = new std::complex<float>[numSamples];
+		MatrixXcf spectrogram_L = MatrixXcf::Zero(2049, numCols);
+		MatrixXcf spectrogram_R = MatrixXcf::Zero(2049, numCols);
+		std::complex<float>* spectrogramData_L = new std::complex<float>[(WINDOW_SIZE/2) + 1];
+		std::complex<float>* spectrogramData_R = new std::complex<float>[(WINDOW_SIZE/2) + 1];
 
 		cout << "\n\nConverting to spectrogram...\n";
 		startSample = 0;
 		for (int col = 0; col < numCols; col++)
 		{
-			stft->applyWindowFunction(bufferData[0]);
-			stft->applyWindowFunction(bufferData[1]);
+			bufferData[0] = (float*)samples.getReadPointer(0, startSample);
+			bufferData[1] = (float*)samples.getReadPointer(1, startSample);
 
-			spectrogramData_L = stft->realToComplex(stft->performForwardTransform(bufferData[0]), WINDOW_SIZE);
-			spectrogramData_R = stft->realToComplex(stft->performForwardTransform(bufferData[1]), WINDOW_SIZE);
+			//stft->applyWindowFunction(bufferData[0]);
+			//stft->applyWindowFunction(bufferData[1]);
+
+			float* bL = stft->performForwardTransform(bufferData[0]);
+			float* bR = stft->performForwardTransform(bufferData[1]);
+
+
+			spectrogramData_L = stft->realToComplex(bL, WINDOW_SIZE);
+			spectrogramData_R =  stft->realToComplex(bR, WINDOW_SIZE);
+
+			//cout << *spectrogramData_L << " ";
+			//cout << *spectrogramData_R << newLine;
+
+			for (int sample = 0; sample < 2049; sample++)
+			{
+				spectrogram_L(sample, col) = spectrogramData_L[sample];
+				spectrogram_R(sample, col) = spectrogramData_R[sample];
+			}
+
+			startSample += HOP_SIZE;
 		}
 
-		
+		/*
 		// DEBUG: DISPLAY SAMPLE VALUES ===
 		// loop through each channel
 		for (int channel = 0; channel < numChannels; channel++)
 		{
-		// get non-writeable pointer to buffer data
-		//bufferData[channel] = (float*)samples.getReadPointer(channel);
+			// get non-writeable pointer to buffer data
+			//bufferData[channel] = (float*)samples.getReadPointer(channel);
 
-		// this will print the first 50 samples from a channel of audio
-		cout << "\nChannel " << channel << ": ";
-		for (int sample = 0; sample < 50; sample++)
-		{
+			// this will print the first 50 samples from a channel of audio
+			cout << "\nChannel " << channel << ": ";
+			for (int sample = 0; sample < 2049; sample++)
+			{
 			//cout << samples.getSample(channel, sample) << ", ";
 			//cout << bufferData[channel][sample] << ", ";
-			if (channel == 0) { cout << spectrogramData_L[sample]; }
-			if (channel == 1) { cout << spectrogramData_R[sample]; }
+			if (channel == 0) { cout << spectrogram_L(sample, 0); }
+			if (channel == 1) { cout << spectrogram_R(sample, 0); }
+			}
+			cout << "\n==============================";
 		}
-		cout << "\n==============================";
-		}
+		*/
 		// ================================
 		
 	
 		// ================================
 
 		// send spectrogram data to separator here and return filtered spectrograms
-		ScopedPointer<Separator> separator = new Separator(spectrogramData_L, spectrogramData_R, numSamples, numCols);
-		separator->startThread();
-		bool finished = separator->waitForThreadToExit(5000);
+		//ScopedPointer<Separator> separator = new Separator(spectrogram_L, spectrogram_R, numSamples, numCols);
+		//separator->startThread();
+		//bool finished = separator->waitForThreadToExit(5000);
 		// =======================================
 
-		// Transform back to audio data -- NEEDS WORK!!!
+		
 		Array<float> outputSignal_Left, outputSignal_Right; 
 		float ifftResults_Left[WINDOW_SIZE], ifftResults_Right[WINDOW_SIZE];
-		float temp_L[WINDOW_SIZE], temp_R[WINDOW_SIZE];
+		float temp_L[WINDOW_SIZE] = {};
+		float temp_R[WINDOW_SIZE] = {};
 
 		Eigen::MatrixXf realMatrix_Left, realMatrix_Right;
-		realMatrix_Left = MatrixXf::Zero((WINDOW_SIZE / 2) + 1, numCols);
-		realMatrix_Right = MatrixXf::Zero((WINDOW_SIZE / 2) + 1, numCols);
+		realMatrix_Left = MatrixXf::Zero(WINDOW_SIZE, numCols);
+		realMatrix_Right = MatrixXf::Zero(WINDOW_SIZE, numCols);
 
 		istft.initWindow(1);
 
-		MatrixXcf* perc = separator->filterFrames();
-		MatrixXcf perc_left = perc[0];
-		MatrixXcf perc_right = perc[1];
-
-		//MatrixXcf* harm = separator->filterBins();
-
-		realMatrix_Left = istft.complexToReal(perc_left);
-		realMatrix_Right = istft.complexToReal(perc_right);
+		realMatrix_Left = istft.complexToReal(spectrogram_L);
+		realMatrix_Right = istft.complexToReal(spectrogram_R);
+		
+		for (int i = 0; i < numSamples; i++)
+		{
+			outputSignal_Left.set(i, 0.0f);
+			outputSignal_Right.set(i, 0.0f);
+		}
 
 		// add-overlap ====================
 		int offset = 0;
 		for (int col = 0; col < numCols; col++)
 		{
-			for (int row = 0; row < WINDOW_SIZE / 2; row++)
+			for (int row = 0; row < WINDOW_SIZE; row++)
 			{
-				ifftResults_Left[row] = 0;
-				ifftResults_Right[row] = 0;
 				temp_L[row] = realMatrix_Left(row, col);
 				temp_R[row] = realMatrix_Right(row, col);
 			}
@@ -180,11 +201,15 @@ int main (int argc, char* argv[])
 
 			offset += HOP_SIZE;
 		}
+
+		//outputSignal_Left.minimiseStorageOverheads();
+		//outputSignal_Right.minimiseStorageOverheads();
 		// ================================
 
 		// WRITE FILE =====================
-		float gain = 1.0f / 1.5f;
+		float gain = 0.5f;
 		juce::AudioSampleBuffer outSamples(2, numSamples);
+		outSamples.clear();
 		const float* leftData = outputSignal_Left.getRawDataPointer();
 		const float* rightData = outputSignal_Right.getRawDataPointer();
 
@@ -192,19 +217,19 @@ int main (int argc, char* argv[])
 		outSamples.addFrom(1, 0, rightData, numSamples, gain);
 
 		FileOutputStream* output;
-		File outputFile = File(File::getCurrentWorkingDirectory().getChildFile(fileNameNoExt + "_perc" + fileExtension));
+		File* outputFile = new File(File::getCurrentWorkingDirectory().getChildFile(fileNameNoExt + "_test" + fileExtension));
 
-		if (outputFile.exists())
+		if (outputFile->exists())
 		{
-			outputFile.deleteFile();
+			outputFile->deleteFile();
 		}
 
-		output = outputFile.createOutputStream();
+		output = outputFile->createOutputStream();
 		WavAudioFormat* wavFormat = new WavAudioFormat();
 		AudioFormatWriter* writer = wavFormat->createWriterFor(output, 44100.0, numChannels, 16, NULL, 0);
+		writer->flush();
 		writer->writeFromAudioSampleBuffer(outSamples, 0, numSamples);
 		writer->flush();
-		outputFile.revealToUser();
 		delete writer;
 		delete wavFormat;
 		wavFormat = nullptr;

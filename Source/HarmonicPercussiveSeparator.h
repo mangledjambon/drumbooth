@@ -22,7 +22,7 @@ public:
 	/*
 		Constructor. Takes a spectrogram as input for filtering.
 	*/
-	Separator(std::complex<float>* leftChannelSpectrogramData, std::complex<float>* rightChannelSpectrogramData, int numSamples, int numCols);
+	Separator(MatrixXcf leftChannelSpec, MatrixXcf rightChannelSpec, int numSamples, int numCols);
 	~Separator();
 
 	/*
