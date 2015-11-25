@@ -9,8 +9,10 @@
 */
 
 #include "STFT.h"
+#include "JuceHeader.h"
+#include <iostream>
 
-STFT::STFT() : fft((long)WINDOW_SIZE)
+STFT::STFT(int fft_size) : fft(fft_size)
 {
 }
 
@@ -19,8 +21,9 @@ STFT::~STFT()
 	// destructor
 }
 
-float* STFT::performForwardTransform(float* array)
+float* STFT::performForwardTransform(const float* array)
 {
+	float* results = new float[WINDOW_SIZE];
 	results[0] = {};
 	
 	fft.do_fft(results, array);
@@ -49,21 +52,25 @@ void STFT::applyWindowFunction(float* array)
 	}
 }
 
-std::complex<float>* STFT::realToComplex(float* data)
+std::complex<float>* STFT::realToComplex(float* data, int size)
 {	
-	for (int i = 0; i < (WINDOW_SIZE / 2); i++)
+	numSamples = size;
+	int complexSize = (size / 2);
+	std::complex<float>* comp = new std::complex<float>[complexSize];
+
+	for (int i = 0; i < complexSize; i++)
 	{
 		if (i == 0)
 		{
 			comp[i] = { data[i], 0.0f };
 		}
-		else if (i == (WINDOW_SIZE / 2))
+		else if (i == complexSize)
 		{
 			comp[i] = { data[i], 0.0f };
 		}
 		else
 		{
-			comp[i] = { data[i], data[i + WINDOW_SIZE / 2] };
+			comp[i] = { data[i], data[i + complexSize] }; // Exception thrown here! Check values are in range!
 		}
 	}
 
