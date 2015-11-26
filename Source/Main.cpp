@@ -104,18 +104,12 @@ int main (int argc, char* argv[])
 			bufferData[0] = (float*)samples.getReadPointer(0, startSample);
 			bufferData[1] = (float*)samples.getReadPointer(1, startSample);
 
-			//stft->applyWindowFunction(bufferData[0]);
-			//stft->applyWindowFunction(bufferData[1]);
-
 			float* bL = stft->performForwardTransform(bufferData[0]);
 			float* bR = stft->performForwardTransform(bufferData[1]);
 
 
 			spectrogramData_L = stft->realToComplex(bL, WINDOW_SIZE);
 			spectrogramData_R =  stft->realToComplex(bR, WINDOW_SIZE);
-
-			//cout << *spectrogramData_L << " ";
-			//cout << *spectrogramData_R << newLine;
 
 			for (int sample = 0; sample < 2049; sample++)
 			{
@@ -152,9 +146,15 @@ int main (int argc, char* argv[])
 		// ================================
 
 		// send spectrogram data to separator here and return filtered spectrograms
-		//ScopedPointer<Separator> separator = new Separator(spectrogram_L, spectrogram_R, numSamples, numCols);
-		//separator->startThread();
-		//bool finished = separator->waitForThreadToExit(5000);
+		ScopedPointer<Separator> separator = new Separator(spectrogram_L, spectrogram_R, numSamples, numCols);
+		
+		if (!separator->isThreadRunning())
+			separator->startThread();
+
+		while (!separator->waitForThreadToExit(-1))
+		{
+			cout << ".";
+		}
 		// =======================================
 
 		
@@ -202,8 +202,8 @@ int main (int argc, char* argv[])
 			offset += HOP_SIZE;
 		}
 
-		//outputSignal_Left.minimiseStorageOverheads();
-		//outputSignal_Right.minimiseStorageOverheads();
+		outputSignal_Left.minimiseStorageOverheads();
+		outputSignal_Right.minimiseStorageOverheads();
 		// ================================
 
 		// WRITE FILE =====================

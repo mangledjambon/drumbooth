@@ -22,42 +22,107 @@
 
 #include <iostream>
 #include "HarmonicPercussiveSeparator.h"
+#define FILTER_SIZE 17
 
-Separator::Separator(MatrixXcf leftChannelData, MatrixXcf rightChannelData, int numSamples, int numCols) : Thread("Separator")
+using std::cout;
+
+Separator::Separator(MatrixXcf leftChannelData, MatrixXcf rightChannelData, int numSamples, int numCols) : Thread("Separator"), finished(false)
 {
 	fullSpectrogramMat_Left = MatrixXcf::Zero(2049, numCols);
 	fullSpectrogramMat_Right = MatrixXcf::Zero(2049, numCols);
 	fullSpectrogramMat_Left = leftChannelData;
 	fullSpectrogramMat_Right = rightChannelData;
+
+	cout<< newLine
+		<< getThreadName()
+		<< ": Created new separator with rows = "
+		<< fullSpectrogramMat_Left.rows()
+		<< ", cols = "
+		<< fullSpectrogramMat_Left.cols()
+		<< newLine;
 }
 
 Separator::~Separator()
-{}
+{
+	cout << "Thread destructor called.";
+}
 
 void Separator::run()
 {
-	// perform thread's code here!
-	//printf("%o"+ getThreadName());
-	printf("\nRows: %d\nCols: %d\n", fullSpectrogramMat_Left.rows(), fullSpectrogramMat_Left.cols());
-	printf("Filtering...");
+		// this should check periodically if the threadShouldExit() == true
+	if (threadShouldExit())
+		return;
+
+	//filterFrames(); // makes thread fail when exiting (??)
+
+	if (threadShouldExit())
+		return;
+
 	filterBins();
-	filterFrames();
+
+	if (threadShouldExit())
+		return;
+
+	resynthesize();
+
 }
 
 MatrixXcf* Separator::filterFrames() 
 {
-	filteredSpectro_Perc[0] = &fullSpectrogramMat_Left;
-	filteredSpectro_Perc[1] = &fullSpectrogramMat_Right;
+	//std::vector<float>* frame[2];
+
+	cout << "\nFiltering Frames..." << newLine;
+
+	for (int col = 0; col < fullSpectrogramMat_Left.cols(); col++)
+	{
+		for (int row = 0; row < fullSpectrogramMat_Left.rows(); col++)
+		{
+
+		}
+	}
+
 	return *filteredSpectro_Perc;
 }
 
 MatrixXcf* Separator::filterBins()
 {
-	filteredSpectro_Harm[0] = new MatrixXcf(fullSpectrogramMat_Left);
-	filteredSpectro_Harm[1] = new MatrixXcf(fullSpectrogramMat_Right);
+	cout << "\nFiltering Frequency Bins..." << newLine;
+
+	for (int row = 0; row < fullSpectrogramMat_Left.rows(); row++)
+	{			
+		for (int col = 0; col < fullSpectrogramMat_Left.cols(); col++)
+		{
+
+		}
+	}
+
 	return *filteredSpectro_Harm;
 }
 
+void Separator::resynthesize()
+{
+	/*
+
+	Pest = filteredSpectrogram_Perc
+	Hest = filteredSpectrogram_Harm
+
+	Masks for audio:
+
+		P = OriginalSpectrogram x Pest^2 / (Pest^2 + Hest^2 + eps)
+
+		H = OriginalSpectrogram x Hest^2 / (Pest^2 + Hest^2 + eps)
+
+	do istft on P & H.
+
+	*/
+
+	cout << newLine << "Resynthesizing..." << newLine;
+
+	// resynth perc
+	
+
+	// resynth harm
+}
 
 MatrixXcf Separator::complexToMatrix(std::complex<float>* data, int numColumns) 
 {
