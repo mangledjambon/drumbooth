@@ -21,15 +21,31 @@
 */
 
 #include <iostream>
-#include <algorithm>
 #include <vector>
 #include "HarmonicPercussiveSeparator.h"
 #define FILTER_SIZE 17
+#define MEDIAN_INDEX (FILTER_SIZE / 2) + 1
 #define eps 0.000001f
 
 using std::cout;
 typedef std::complex<float> Complex;
 typedef std::vector<std::complex<float>> ComplexVector;
+class MyArraySorter;
+
+class MyArraySorter
+{
+public:
+
+	static int compareElements(std::complex<float> a, std::complex<float> b)
+	{
+		if (a.real() < b.real())
+			return -1;
+		else if (a.real() > b.real())
+			return 1;
+		else // if a == b
+			return 0;
+	}
+};
 
 Separator::Separator(MatrixXcf leftChannelData, MatrixXcf rightChannelData, int numSamples, int numCols) : Thread("Separator"), finished(false)
 {
@@ -76,14 +92,10 @@ MatrixXcf* Separator::filterFrames()
 		// loop rows
 		for (int row = 0; row < fullSpectrogramMat_Left.rows(); row++)
 		{
-			// store frameData in Array
-			//frameData[0].set(row, fullSpectrogramMat_Left(row, col));
-			//cout << frameData[0][row] << newLine;
-			//frameData[1].set(row, fullSpectrogramMat_Left(row, col));
-			//cout << frameData[1][row] << newLine;
-
 			Array<Complex> frameData[2];
+			MyArraySorter arraySorter;
 			Complex median;
+
 			for (int samp = row; samp < (row + FILTER_SIZE); samp++)
 			{
 				if (samp < 2049)
@@ -92,25 +104,18 @@ MatrixXcf* Separator::filterFrames()
 					frameData[1].add(fullSpectrogramMat_Right(samp, col));
 				}
 
-				if (frameData[0].size() == FILTER_SIZE) // 17 samples in filter batch
+				if (frameData[0].size() == FILTER_SIZE) // when all samples in filter batch
 				{
-					// sort and pick median
-					for (int sortSamp = 0; sortSamp <= (FILTER_SIZE - 1); sortSamp++)
-					{
-						// fix sorting!!
-						if (frameData[0][sortSamp].real() > frameData[0][sortSamp + 1].real())
-							frameData[0].swap(sortSamp, sortSamp+1);
-
-						if (frameData[1][sortSamp].real() > frameData[1][sortSamp + 1].real())
-							frameData[1].swap(sortSamp, sortSamp + 1);
-					}
+					// sort arrays
+					frameData[0].sort(arraySorter);
+					frameData[1].sort(arraySorter);
 
 					// assign median value to filteredSpectro_Perc[0](row, col)
-					median = frameData[0][9];
+					median = frameData[0][MEDIAN_INDEX];
 					filteredSpectro_Perc[0](row, col) = median;
 
 					// assign median value to filteredSpectro_Perc[1](row, col)
-					median = frameData[1][9];
+					median = frameData[1][MEDIAN_INDEX];
 					filteredSpectro_Perc[1](row, col) = median;
 
 				}
@@ -129,11 +134,13 @@ MatrixXcf* Separator::filterBins()
 	// loop through rows of spectrogram
 	for (int row = 0; row < fullSpectrogramMat_Left.rows(); row++)
 	{	
-		// fill vectors with sepctrogram data for this row
+		// loop through columns of spectrogram
 		for (int col = 0; col < fullSpectrogramMat_Left.cols(); col++)
 		{
 			Array<Complex> binData[2];
+			MyArraySorter arraySorter;
 			Complex median;
+
 			for (int samp = col; samp < (col + FILTER_SIZE); samp++)
 			{
 				if (samp < fullSpectrogramMat_Left.cols())
@@ -142,25 +149,18 @@ MatrixXcf* Separator::filterBins()
 					binData[1].add(fullSpectrogramMat_Right(row, samp));
 				}
 
-				if (binData[0].size() == FILTER_SIZE) // 17 samples in filter batch
+				if (binData[0].size() == FILTER_SIZE) // when all samples in filter batch
 				{
-					// sort and pick median
-					for (int sortSamp = 0; sortSamp <= (FILTER_SIZE - 1); sortSamp++)
-					{
-						// fix sorting!!
-						if (binData[0][sortSamp].real() > binData[0][sortSamp + 1].real())
-							binData[0].swap(sortSamp, sortSamp + 1);
+					// sort filter batch
+					binData[0].sort(arraySorter);
+					binData[1].sort(arraySorter);
 
-						if (binData[1][sortSamp].real() > binData[1][sortSamp + 1].real())
-							binData[1].swap(sortSamp, sortSamp + 1);
-					}
-
-					// assign median value to filteredSpectro_Perc[0](row, col)
-					median = binData[0][9];
+					// assign median value to filteredSpectro_Harm[0](row, col)
+					median = binData[0][MEDIAN_INDEX];
 					filteredSpectro_Harm[0](row, col) = median;
 
-					// assign median value to filteredSpectro_Perc[1](row, col)
-					median = binData[1][9];
+					// assign median value to filteredSpectro_Harm[1](row, col)
+					median = binData[1][MEDIAN_INDEX];
 					filteredSpectro_Harm[1](row, col) = median;
 
 				}
@@ -184,6 +184,11 @@ void Separator::resynthesize()
 
 		H = OriginalSpectrogram x Hest^2 / (Pest^2 + Hest^2 + eps)
 
+		where
+			Pest = spectrogram for filtered frame data
+			Hest = spectrogram for filtered frequency bin data
+			eps = constant
+
 	do istft on P & H in main.
 
 	*/
@@ -194,74 +199,29 @@ void Separator::resynthesize()
 	pest2[0] = filteredSpectro_Perc[0].cwiseProduct(filteredSpectro_Perc[0]);
 	pest2[1] = filteredSpectro_Perc[1].cwiseProduct(filteredSpectro_Perc[1]);
 
-	MatrixXcf pest = pest2[0] + pest2[1];
+	//MatrixXcf pest = filteredSpectro_Perc[0] + filteredSpectro_Perc[1];
+	//MatrixXcf pest2 = pest.cwiseProduct(pest);
 
 	MatrixXcf hest2[2];
 	hest2[0] = filteredSpectro_Harm[0].cwiseProduct(filteredSpectro_Harm[0]);
 	hest2[1] = filteredSpectro_Harm[1].cwiseProduct(filteredSpectro_Harm[1]);
 
-	MatrixXcf hest = hest2[0] + hest2[1];
+	//MatrixXcf hest = filteredSpectro_Harm[0] + filteredSpectro_Harm[1];
+	//MatrixXcf hest2 = hest.cwiseProduct(hest);
 
-	MatrixXcf maskDivisor = (pest + hest);
+	MatrixXcf maskDivisorL = (pest2[0] + hest2[0]);
+	MatrixXcf maskDivisorR = (pest2[1] + hest2[1]);
+	//MatrixXcf maskDivisor = maskDivisorL + maskDivisorR;
 
-	MatrixXcf p_mask = pest.cwiseQuotient(maskDivisor);
+	MatrixXcf p_maskL = pest2[0].cwiseQuotient(maskDivisorL);
+	MatrixXcf p_maskR = pest2[1].cwiseQuotient(maskDivisorR);
 
-	MatrixXcf h_mask = hest.cwiseQuotient(maskDivisor);
+	MatrixXcf h_maskL = hest2[0].cwiseQuotient(maskDivisorL);
+	MatrixXcf h_maskR = hest2[1].cwiseQuotient(maskDivisorR);
 
-	filteredSpectro_Perc[0] = fullSpectrogramMat_Left.cwiseProduct(p_mask);
-	filteredSpectro_Perc[1] = fullSpectrogramMat_Right.cwiseProduct(p_mask);
+	resynth_P[0] = fullSpectrogramMat_Left.cwiseProduct(p_maskL);
+	resynth_P[1] = fullSpectrogramMat_Right.cwiseProduct(p_maskR);
 
-	filteredSpectro_Harm[0] = fullSpectrogramMat_Left.cwiseProduct(h_mask);
-	filteredSpectro_Harm[1] = fullSpectrogramMat_Right.cwiseProduct(h_mask);
-}
-
-// must test this comparator
-int Separator::compareElements(Complex c1,Complex c2)
-{
-	if (c1.real() == c2.real())
-		return 0;
-	if (c1.real() < c2.real())
-		return 1;
-	if (c1.real() < c2.real())
-		return -1;
-
-	return 2;
-}
-
-void Separator::sort(ComplexVector& dataToSort)
-{
-	//std::sort(dataToSort.begin(), dataToSort.end(), myWay);
-	Array<std::complex<float>> comp;
-	//comp.s
-
-	for (int i = 0; i < dataToSort.size() - 1; i++)
-	{
-		Complex temp;
-
-		if (dataToSort[i].real() > dataToSort[i + 1].real())
-		{
-			temp = dataToSort[i];
-			dataToSort[i] = dataToSort[i + 1];
-			dataToSort[i + 1] = temp;
-		}
-	}
-}
-
-MatrixXcf Separator::complexToMatrix(std::complex<float>* data, int numColumns) 
-{
-	const int cols = (const int)numColumns;
-	int offset = 0;
-	MatrixXcf matrix = Eigen::MatrixXcf::Zero(2049, cols);
-	
-	for (int col = 0; col < numColumns; col++)
-	{
-		for (int row = 0; row < 2049; row++)
-		{
-			matrix(row, col) = data[row + offset];
-		}
-
-		offset += 2049;
-	}
-
-	return matrix;
+	resynth_H[0] = fullSpectrogramMat_Left.cwiseProduct(h_maskL);
+	resynth_H[1] = fullSpectrogramMat_Right.cwiseProduct(h_maskR);
 }

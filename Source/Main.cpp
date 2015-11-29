@@ -35,6 +35,8 @@ int main (int argc, char* argv[])
 	// initialise format manager which handles reading different file formats
 	AudioFormatManager formatManager;
 	formatManager.registerBasicFormats();
+
+	//cout << "Filter size = " << FILTER_SIZE << "\nMedian index = " << (FILTER_SIZE / 2) + 1;
 	
 	if (argc < 2)
 	{
@@ -53,6 +55,11 @@ int main (int argc, char* argv[])
 			cout << "File not found.";
 			return 1;
 		}
+
+		cout << newLine << "================ DRUMBOOTH ================"
+			<< newLine
+			<< "Sean Breen DCOM4 Final Year Project (prototype v0.1)"
+			<< newLine;
 
 		fileName = inputFiles[i].getFileName();
 		fileNameNoExt = inputFiles[i].getFileNameWithoutExtension();
@@ -170,8 +177,8 @@ int main (int argc, char* argv[])
 		istft.initWindow(1);
 
 		// PREPARE AND WRITE PERCUSSIVE FILE
-		realMatrix_Left = istft.complexToReal(separator->filteredSpectro_Perc[0]);
-		realMatrix_Right = istft.complexToReal(separator->filteredSpectro_Perc[1]);
+		realMatrix_Left = istft.complexToReal(separator->resynth_P[0]);
+		realMatrix_Right = istft.complexToReal(separator->resynth_P[1]);
 		
 		for (int i = 0; i < numSamples; i++)
 		{
@@ -202,6 +209,7 @@ int main (int argc, char* argv[])
 
 			offset += HOP_SIZE;
 		}
+
 		// ================================
 
 		// WRITE FILE =====================
@@ -225,24 +233,23 @@ int main (int argc, char* argv[])
 		output = outputFile->createOutputStream();
 		WavAudioFormat* wavFormat = new WavAudioFormat();
 		AudioFormatWriter* writer = wavFormat->createWriterFor(output, 44100.0, numChannels, 16, NULL, 0);
+
+		// write from sample buffer
 		writer->flush();
 		writer->writeFromAudioSampleBuffer(outSamples, 0, numSamples);
 		writer->flush();
+
+		// cleanup
 		delete writer;
 		delete wavFormat;
 		wavFormat = nullptr;
 		writer = nullptr;
-
+		outputSignal_Left.clearQuick();
+		outputSignal_Right.clearQuick();
 
 		// PREPARE AND WRITE HARMONIC FILE
-		realMatrix_Left = istft.complexToReal(separator->filteredSpectro_Harm[0]);
-		realMatrix_Right = istft.complexToReal(separator->filteredSpectro_Harm[1]);
-
-		for (int i = 0; i < numSamples; i++)
-		{
-			outputSignal_Left.set(i, 0.0f);
-			outputSignal_Right.set(i, 0.0f);
-		}
+		realMatrix_Left = istft.complexToReal(separator->resynth_H[0]);
+		realMatrix_Right = istft.complexToReal(separator->resynth_H[1]);
 
 		// add-overlap ====================
 		offset = 0;
@@ -267,11 +274,11 @@ int main (int argc, char* argv[])
 
 			offset += HOP_SIZE;
 		}
+
 		// ================================
 
 		// WRITE FILE =====================
 		gain = 0.5f;
-		//juce::AudioSampleBuffer outSamples(2, numSamples);
 		outSamples.clear();
 		leftData = outputSignal_Left.getRawDataPointer();
 		rightData = outputSignal_Right.getRawDataPointer();
@@ -296,6 +303,8 @@ int main (int argc, char* argv[])
 		delete wavFormat;
 		wavFormat = nullptr;
 		writer = nullptr;
+		outputSignal_Left.clear();
+		outputSignal_Right.clear();
 		cout << "\nFiles written.";
 		// ================================
 
