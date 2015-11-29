@@ -14,6 +14,8 @@
 #include "Eigen\Eigen"
 
 using Eigen::MatrixXcf;
+typedef std::vector<std::complex<float>> ComplexVector;
+typedef std::complex<float> Complex;
 
 class Separator : public Thread {
 
@@ -55,8 +57,8 @@ public:
 	*/
 	void resynthesize();
 
-	MatrixXcf* filteredSpectro_Perc[2];
-	MatrixXcf* filteredSpectro_Harm[2];
+	MatrixXcf filteredSpectro_Perc[2];
+	MatrixXcf filteredSpectro_Harm[2];
 	MatrixXcf resynth_P[2];
 	MatrixXcf resynth_H[2];
 
@@ -75,7 +77,10 @@ private:
 	/* 
 		sorts a list of floating-point values of size n.
 	*/
-	void sort(std::complex<float>* data, int n);
+	void sort(ComplexVector& vectorToSort);
+
+	int compareElements(Complex c1, Complex c2);
+
 protected:
 
 

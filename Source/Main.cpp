@@ -169,8 +169,9 @@ int main (int argc, char* argv[])
 
 		istft.initWindow(1);
 
-		realMatrix_Left = istft.complexToReal(spectrogram_L);
-		realMatrix_Right = istft.complexToReal(spectrogram_R);
+		// PREPARE AND WRITE PERCUSSIVE FILE
+		realMatrix_Left = istft.complexToReal(separator->filteredSpectro_Perc[0]);
+		realMatrix_Right = istft.complexToReal(separator->filteredSpectro_Perc[1]);
 		
 		for (int i = 0; i < numSamples; i++)
 		{
@@ -201,9 +202,6 @@ int main (int argc, char* argv[])
 
 			offset += HOP_SIZE;
 		}
-
-		outputSignal_Left.minimiseStorageOverheads();
-		outputSignal_Right.minimiseStorageOverheads();
 		// ================================
 
 		// WRITE FILE =====================
@@ -217,7 +215,7 @@ int main (int argc, char* argv[])
 		outSamples.addFrom(1, 0, rightData, numSamples, gain);
 
 		FileOutputStream* output;
-		File* outputFile = new File(File::getCurrentWorkingDirectory().getChildFile(fileNameNoExt + "_test" + fileExtension));
+		File* outputFile = new File(File::getCurrentWorkingDirectory().getChildFile(fileNameNoExt + "_perc" + fileExtension));
 
 		if (outputFile->exists())
 		{
@@ -235,7 +233,70 @@ int main (int argc, char* argv[])
 		wavFormat = nullptr;
 		writer = nullptr;
 
-		cout << "\nFile written.";
+
+		// PREPARE AND WRITE HARMONIC FILE
+		realMatrix_Left = istft.complexToReal(separator->filteredSpectro_Harm[0]);
+		realMatrix_Right = istft.complexToReal(separator->filteredSpectro_Harm[1]);
+
+		for (int i = 0; i < numSamples; i++)
+		{
+			outputSignal_Left.set(i, 0.0f);
+			outputSignal_Right.set(i, 0.0f);
+		}
+
+		// add-overlap ====================
+		offset = 0;
+		for (int col = 0; col < numCols; col++)
+		{
+			for (int row = 0; row < WINDOW_SIZE; row++)
+			{
+				temp_L[row] = realMatrix_Left(row, col);
+				temp_R[row] = realMatrix_Right(row, col);
+			}
+
+			istft.performInverseTransform(temp_L, ifftResults_Left);
+			istft.rescale(ifftResults_Left);
+			istft.performInverseTransform(temp_R, ifftResults_Right);
+			istft.rescale(ifftResults_Right);
+
+			for (int i = 0; i < WINDOW_SIZE; i++)
+			{
+				outputSignal_Left.set(offset + i, (outputSignal_Left[offset + i] + (ifftResults_Left[i] * istft.window[i])));
+				outputSignal_Right.set(offset + i, (outputSignal_Right[offset + i] + (ifftResults_Right[i] * istft.window[i])));
+			}
+
+			offset += HOP_SIZE;
+		}
+		// ================================
+
+		// WRITE FILE =====================
+		gain = 0.5f;
+		//juce::AudioSampleBuffer outSamples(2, numSamples);
+		outSamples.clear();
+		leftData = outputSignal_Left.getRawDataPointer();
+		rightData = outputSignal_Right.getRawDataPointer();
+
+		outSamples.addFrom(0, 0, leftData, numSamples, gain);
+		outSamples.addFrom(1, 0, rightData, numSamples, gain);
+
+		outputFile = new File(File::getCurrentWorkingDirectory().getChildFile(fileNameNoExt + "_harm" + fileExtension));
+
+		if (outputFile->exists())
+		{
+			outputFile->deleteFile();
+		}
+
+		output = outputFile->createOutputStream();
+		wavFormat = new WavAudioFormat();
+		writer = wavFormat->createWriterFor(output, 44100.0, numChannels, 16, NULL, 0);
+		writer->flush();
+		writer->writeFromAudioSampleBuffer(outSamples, 0, numSamples);
+		writer->flush();
+		delete writer;
+		delete wavFormat;
+		wavFormat = nullptr;
+		writer = nullptr;
+		cout << "\nFiles written.";
 		// ================================
 
 		cout << newLine;
