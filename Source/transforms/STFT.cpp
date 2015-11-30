@@ -12,8 +12,9 @@
 #include "JuceHeader.h"
 #include <iostream>
 
-STFT::STFT(int fft_size) : fft(fft_size)
+STFT::STFT(int size) : fft(size)
 {
+
 }
 
 STFT::~STFT()
@@ -33,8 +34,8 @@ float* STFT::performForwardTransform(const float* array)
 }
 
 // initialises and assigns window array
-void STFT::initWindow(int windowType){
-
+void STFT::initWindow(int windowType)
+{
 	if (windowType == HANN)
 	{
 		for (int i = 0; i < WINDOW_SIZE; i++){
@@ -70,7 +71,7 @@ std::complex<float>* STFT::realToComplex(float* data, int size)
 		}
 		else
 		{
-			comp[i] = { data[i], data[i + complexSize] }; // Exception thrown here! Check values are in range!
+			comp[i] = { data[i], data[i + complexSize] };
 		}
 	}
 

@@ -14,10 +14,12 @@
 #include "Eigen\Eigen"
 
 using Eigen::MatrixXcf;
+using Eigen::MatrixXf;
 typedef std::vector<std::complex<float>> ComplexVector;
 typedef std::complex<float> Complex;
 
-class Separator : public Thread {
+class Separator : public Thread 
+{
 
 public:
 
@@ -40,7 +42,7 @@ public:
 		output:		complex matrix which is spectrogram data for 
 					the original spectrogram with the harmonic elements removed
 	*/
-	MatrixXcf* filterFrames();
+	; MatrixXf* filterFrames();
 
 	/*
 		Filters each frequency bin in the spectrogram. Use this method to extract the harmonic events.
@@ -50,15 +52,15 @@ public:
 		output:		complex matrix containing the frequency data for 
 					the original spectrogram with the percussive elements removed.
 	*/
-	MatrixXcf* filterBins();
+	MatrixXf* filterBins();
 
 	/*
 		resynthesizes the spectrograms back to audio data for writing to the file.
 	*/
 	void resynthesize();
 
-	MatrixXcf filteredSpectro_Perc[2];
-	MatrixXcf filteredSpectro_Harm[2];
+	MatrixXf filteredSpectro_Perc[2];
+	MatrixXf filteredSpectro_Harm[2];
 	MatrixXcf resynth_P[2];
 	MatrixXcf resynth_H[2];
 
@@ -80,9 +82,6 @@ private:
 	void sort(ComplexVector& vectorToSort);
 
 	int compareElements(Complex c1, Complex c2);
-
-protected:
-
 
 };
 

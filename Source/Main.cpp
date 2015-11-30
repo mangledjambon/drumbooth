@@ -104,16 +104,20 @@ int main (int argc, char* argv[])
 		std::complex<float>* spectrogramData_L = new std::complex<float>[(WINDOW_SIZE/2) + 1];
 		std::complex<float>* spectrogramData_R = new std::complex<float>[(WINDOW_SIZE/2) + 1];
 
-		cout << "\n\nConverting to spectrogram...\n";
+		cout << "\nConverting to spectrogram...";
+		cout << "\n\r10%" << std::flush;
 		startSample = 0;
 		for (int col = 0; col < numCols; col++)
 		{
+			//cout << "20%" << std::flush;
 			bufferData[0] = (float*)samples.getReadPointer(0, startSample);
 			bufferData[1] = (float*)samples.getReadPointer(1, startSample);
 
+			//stft->applyWindowFunction(bufferData[0]);
+			//stft->applyWindowFunction(bufferData[1]);
+
 			float* bL = stft->performForwardTransform(bufferData[0]);
 			float* bR = stft->performForwardTransform(bufferData[1]);
-
 
 			spectrogramData_L = stft->realToComplex(bL, WINDOW_SIZE);
 			spectrogramData_R =  stft->realToComplex(bR, WINDOW_SIZE);
@@ -123,6 +127,15 @@ int main (int argc, char* argv[])
 				spectrogram_L(sample, col) = spectrogramData_L[sample];
 				spectrogram_R(sample, col) = spectrogramData_R[sample];
 			}
+
+			if (col == (numCols / 4))
+				cout << "\r25%" << std::flush;
+			else if (col == (numCols / 2))
+				cout << "\r50%" << std::flush;
+			else if (col == (numCols / 3))
+				cout << "\r66%" << std::flush;
+			else if (col == (numCols - 1))
+				cout << "\r100%" << std::flush << newLine;
 
 			startSample += HOP_SIZE;
 		}
