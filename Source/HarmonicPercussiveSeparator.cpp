@@ -96,9 +96,12 @@ MatrixXf* Separator::filterFrames()
 	// loop columns
 	for (int col = 0; col < numCols; col++)
 	{
+		cout << "\r" << 100 * col / numCols << "%" << std::flush;
+
 		// loop rows
 		for (int row = 0; row < fullSpectrogramMat_Left.rows(); row++)
 		{
+
 			Array<float> frameData[2];
 			MyArraySorter arraySorter;
 			float median;
@@ -127,17 +130,9 @@ MatrixXf* Separator::filterFrames()
 				}
 			}
 		}
-
-		if (col == numCols / 4)
-			cout << "\r25%" << std::flush;
-		else if (col == numCols / 2)
-			cout << "\r50%" << std::flush;
-		else if (col == numCols / 3)
-			cout << "\r66%" << std::flush;
-		else if (col == numCols - 1)
-			cout << "\r100%" << std::flush << newLine;
-		
 	}
+
+	cout << "\r100%" << std::flush << newLine;
 
 	return filteredSpectro_Perc;
 }
@@ -151,6 +146,8 @@ MatrixXf* Separator::filterBins()
 	// loop through rows of spectrogram
 	for (int row = 0; row < numRows; row++)
 	{	
+		cout << "\r" << 100 * row / numRows << "%" << std::flush;
+
 		// loop through columns of spectrogram
 		for (int col = 0; col < fullSpectrogramMat_Left.cols(); col++)
 		{
@@ -183,19 +180,9 @@ MatrixXf* Separator::filterBins()
 				}
 			}
 		}
-
-		if (row == numRows / 10)
-			cout << "\r10%" << std::flush;
-		else if (row == numRows / 8)
-			cout << "\r20%" << std::flush;
-		else if (row == numRows / 2)
-			cout << "\r50%" << std::flush;
-		else if (row == numRows / 0.5)
-			cout << "\r75%" << std::flush;
-		else if (row == numRows - 1)
-			cout << "\r100%" << std::flush << newLine;
-
 	}
+
+	cout << "\r100%" << std::flush << newLine;
 
 	return filteredSpectro_Harm;
 }

@@ -104,12 +104,13 @@ int main (int argc, char* argv[])
 		std::complex<float>* spectrogramData_L = new std::complex<float>[(WINDOW_SIZE/2) + 1];
 		std::complex<float>* spectrogramData_R = new std::complex<float>[(WINDOW_SIZE/2) + 1];
 
-		cout << "\nConverting to spectrogram...";
-		cout << "\n\r10%" << std::flush;
+		cout << "\nConverting to spectrogram..." << newLine;
 		startSample = 0;
+
 		for (int col = 0; col < numCols; col++)
 		{
-			//cout << "20%" << std::flush;
+			cout << "\r" << 100 * col / numCols << "%" << std::flush;
+
 			bufferData[0] = (float*)samples.getReadPointer(0, startSample);
 			bufferData[1] = (float*)samples.getReadPointer(1, startSample);
 
@@ -128,17 +129,9 @@ int main (int argc, char* argv[])
 				spectrogram_R(sample, col) = spectrogramData_R[sample];
 			}
 
-			if (col == (numCols / 4))
-				cout << "\r25%" << std::flush;
-			else if (col == (numCols / 2))
-				cout << "\r50%" << std::flush;
-			else if (col == (numCols / 3))
-				cout << "\r66%" << std::flush;
-			else if (col == (numCols - 1))
-				cout << "\r100%" << std::flush << newLine;
-
 			startSample += HOP_SIZE;
 		}
+		cout << "\r100%" << std::flush << newLine;
 
 		/*
 		// DEBUG: DISPLAY SAMPLE VALUES ===
