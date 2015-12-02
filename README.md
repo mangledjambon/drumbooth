@@ -13,4 +13,6 @@ Usage:
 
 where file is an audio file in WAV, FLAC or MP3 format with sample rate of 44.1kHz. 
 
+![screenshot](https://github.com/mangledjambon/drumbooth/blob/master/screenshots/screenshot.JPG "Screen")
+
 Best result are achieved with high-quality wav or flac files, less than 3 minutes and 30 seconds long. Any file greater than 3 minutes and 30 seconds in length may cause the application to crash. A fix for this is incoming. 
