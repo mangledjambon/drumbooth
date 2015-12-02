@@ -51,6 +51,7 @@ endif
 OBJECTS := \
   $(OBJDIR)/ISTFT_9a0647b9.o \
   $(OBJDIR)/STFT_ce621a58.o \
+  $(OBJDIR)/ArraySorter_a9d842e5.o \
   $(OBJDIR)/HarmonicPercussiveSeparator_4d4832d0.o \
   $(OBJDIR)/Main_90ebc5c2.o \
   $(OBJDIR)/juce_audio_basics_b72001c8.o \
@@ -90,6 +91,11 @@ $(OBJDIR)/ISTFT_9a0647b9.o: ../../Source/Transforms/ISTFT.cpp
 $(OBJDIR)/STFT_ce621a58.o: ../../Source/Transforms/STFT.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling STFT.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/ArraySorter_a9d842e5.o: ../../Source/ArraySorter.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling ArraySorter.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/HarmonicPercussiveSeparator_4d4832d0.o: ../../Source/HarmonicPercussiveSeparator.cpp

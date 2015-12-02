@@ -13,6 +13,7 @@ LOCAL_MODULE := juce_jni
 LOCAL_SRC_FILES := \
   ../../../Source/Transforms/ISTFT.cpp\
   ../../../Source/Transforms/STFT.cpp\
+  ../../../Source/ArraySorter.cpp\
   ../../../Source/HarmonicPercussiveSeparator.cpp\
   ../../../Source/Main.cpp\
   ../../../../../Cpp/JUCE/modules/juce_audio_basics/juce_audio_basics.cpp\

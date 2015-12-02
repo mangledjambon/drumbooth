@@ -11,6 +11,7 @@
         <FILE id="oYupDy" name="STFT.cpp" compile="1" resource="0" file="Source/Transforms/STFT.cpp"/>
         <FILE id="a3rrOt" name="STFT.h" compile="0" resource="0" file="Source/Transforms/STFT.h"/>
       </GROUP>
+      <FILE id="FKD4uV" name="ArraySorter.cpp" compile="1" resource="0" file="Source/ArraySorter.cpp"/>
       <FILE id="SFHkIT" name="HarmonicPercussiveSeparator.cpp" compile="1"
             resource="0" file="Source/HarmonicPercussiveSeparator.cpp"/>
       <FILE id="K7KSex" name="HarmonicPercussiveSeparator.h" compile="0"
