@@ -5,18 +5,13 @@
     Created: 17 Nov 2015 12:00:42pm
     Author:  Sean
 
-	TODO:	filterBins	->	loop through frequency bins, 
-							for each bin do:			
-								1. take 17 values
-								2. sort
-								3. take median value
+	This class takes data from the left and right channels of a spectrogram as inputs.
+	It performs two median filter operations on the channels.
 
-			filterFrames -> loop through frames
-							for each frame do:
-								take 17 samples
-								sort them
-								take median value
-								add frame to end of filter spectrogram
+	The first operation filters each time frame to get the percussive spectrogram for left and right channels.
+	The second operation filters each frequency bin o get the harmonic spectrogram for left and right channels.
+	The two spectrograms are then resynthesized back to audio data.
+
   ==============================================================================
 */
 
