@@ -1,4 +1,4 @@
-# DrumBooth
+# DrumBooth Prototype v0.2
 # DCOM4 Final Year Project 2015
 Sean Breen - R00070693
 sean.breen@mycit.ie
