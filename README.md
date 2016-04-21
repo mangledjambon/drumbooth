@@ -1,15 +1,17 @@
 # DrumBooth Prototype v0.2
-# DCOM4 Final Year Project 2015
+# DCOM4 Final Year Project 2016
 Sean Breen - R00070693
 sean.breen@mycit.ie
 
 DrumBooth takes an audio file and separates it into its harmonic and percussive components.
-Currently only tested on Windows. Linux version soon.
-Built with JUCE (www.juce.com), FFTReal (http://ldesoras.free.fr/prod.html) and Eigen (http://eigen.tuxfamily.org/).
+Runs on Windows.
+Built with [JUCE] (www.juce.com), [FFTReal] (http://ldesoras.free.fr/prod.html) and [Eigen] (http://eigen.tuxfamily.org/).
 
 Usage:
 
-	> MedianFiltering.exe [file]
+	From cmd, navigate to directory where executable is located and execute
+	
+	> MedianFiltering.exe [path-to-file]
 
 where file is an audio file in WAV, FLAC or MP3 format with sample rate of 44.1kHz. 
 
