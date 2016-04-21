@@ -3,7 +3,7 @@
 Sean Breen - R00070693
 sean.breen@mycit.ie
 
-DrumBooth takes an audio file and separates it into its harmonic and percussive components.
+DrumBooth takes an audio file and separates it into its harmonic and percussive components using median filtering. It works by performing a median filter on each time frame to eliminate horizontal transients and leave vertical noise untouched, and on each frequency bin to eliminate noise and leave harmonics untouched.
 Runs on Windows.
 Built with [JUCE] (www.juce.com), [FFTReal] (http://ldesoras.free.fr/prod.html) and [Eigen] (http://eigen.tuxfamily.org/).
 
