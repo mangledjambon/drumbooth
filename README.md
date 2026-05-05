@@ -1,7 +1,4 @@
 # DrumBooth Prototype v0.2
-# DCOM4 Final Year Project 2016
-Sean Breen - R00070693
-sean.breen@mycit.ie
 
 DrumBooth takes an audio file and separates it into its harmonic and percussive components using median filtering. It works by performing a median filter on each time frame to eliminate horizontal transients and leave vertical noise untouched, and on each frequency bin to eliminate noise and leave harmonics untouched.
 Runs on Windows.
